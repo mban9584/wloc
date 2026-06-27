@@ -10,7 +10,7 @@ app.get("/", (c) => {
 
 // 地图链接解析: 供快捷指令调用。
 // GET /api/parse?u=<链接>&format=json&cs=<gcj|none>
-//   返回 {lat, lon, name}; 高德(GCJ-02)自动转 WGS84, 苹果地图原样。
+//   返回 {lat, lon, name}; 高德/苹果地图(中国大陆均为 GCJ-02)自动转 WGS84; 境外坐标自动跳过(out_of_china)。cs=none 可强制不转换。
 //   不带 format=json 时返回纯文本 "lat=..&lon=.." 片段。
 app.get("/api/parse", async (c) => {
   const raw = c.req.query("u") || "";
@@ -18,7 +18,7 @@ app.get("/api/parse", async (c) => {
   const fmt = (c.req.query("format") || "").toLowerCase();
   try {
     let { lat, lon, name, src } = await parseCoords(raw);
-    const needConv = cs === "gcj" || (cs !== "none" && src === "amap");
+    const needConv = cs === "gcj" || (cs !== "none" && (src === "amap" || src === "apple"));
     if (needConv) ({ lat, lon } = gcj02ToWgs84(lat, lon));
     lat = round6(lat);
     lon = round6(lon);

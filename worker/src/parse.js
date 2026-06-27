@@ -1,5 +1,6 @@
 // 坐标解析: 接受地图链接(苹果地图 / 高德, 含短链), 抠出经纬度+名称。
-// 高德为 GCJ-02, 需转 WGS84 再喂给 wloc; 苹果地图按原样。
+// 高德为 GCJ-02; 苹果地图在中国大陆同为 GCJ-02。两者都转 WGS84 再喂给 wloc;
+// gcj02ToWgs84 内含 out_of_china 判断, 境外坐标原样返回(无操作)。
 
 export function safeDecode(s) {
   if (!s) return "";
